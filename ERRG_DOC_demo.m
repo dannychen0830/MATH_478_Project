@@ -1,3 +1,5 @@
+% NOT INCLUDED IN REPORT!
+
 N = 20;
 eir = 0.75; % Excitatory/Inhibatory ratio
 mag = 0.6; % Connection Strength

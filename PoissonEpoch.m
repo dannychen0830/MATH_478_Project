@@ -1,3 +1,5 @@
+% NOT USED IN PROJECT!
+
 % Processes the arrival times of independent Poisson Processes
 
 

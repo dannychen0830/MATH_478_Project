@@ -12,23 +12,29 @@ for i=1:N
     end
 end
 
-dur = 500;
+dur = 500; % the duration of the experiment
 Vlast = zeros(N,1);
 train = zeros([40,0]);
 S = 0;
 
 while true
-    lambda = 1/(40 + normrnd(0,5));
-    X = -1*log(1-rand)/lambda;
-    S = S + X;
+    lambda = 1/(40 + normrnd(0,5)); % generate arrival rate
+    X = -1*log(1-rand)/lambda; % generate waiting time for this epoch
+    S = S + X; % keep track of the amount of time passed
+    
+    % randomly set the magnitude of drive and noise
     drive = max([0.2+normrnd(0,0.3), 0.1]);
     noise = max([0.4 + normrnd(0,0.15), 0.2]);
+    
+    % generate corresponding spike train for X time
     [spk NetParams V] = SimLIFNet(W,'simTime',X,'tstep',1e-2,...
       'offsetCurrents',drive*ones(length(W),1),...
            'noiseAmplitude',noise*ones(length(W),1),...
                 'initialConditions',Vlast, ...
                 'displayProgress',0,'plotResults',0);
     T = time_to_train(spk,X,1);
+    
+    % concatenate the spike train from previous runs
     if length(train(1,:)) == 0
         train = T;
     else
@@ -37,24 +43,28 @@ while true
     end
     Vlast = V(:,length(V));
     disp(['Epoch of length ', num2str(X)])
+    
+    % if time's up, break!
     if S > dur
         break 
     end
 end
 
-%%
+%% Plot the results 
 figure(1)
-subplot(2,3,[1 2 3])
+subplot(2,3,[1 2 3]) % plot the resulting spike train
 imagesc(train)
 title('spike train')
 xlabel(''), ylabel('')
 colormap(flipud(gray))
-subplot(2,3,4)
+
+subplot(2,3,4) % plot the performance of algorithm
 [h,J] = InverseIsing2(train,N,30,0.4,0.4,10000,10000);
 xlabel('number of iterations')
 ylabel('discrepency between model and data')
 title('Model Fitting')
-subplot(2,3,6)
+
+subplot(2,3,6) % plot the heat capacity
 num = 5;
 dis = zeros(1,num);
 for i=1:num
@@ -70,14 +80,15 @@ hold on
 %xline(sum(dis)/num + 1)
 hold off
 title('Temperature vs. Heat Capacity')
-subplot(2,3,5)
+
+subplot(2,3,5) % plot the distribution of the pairwise parameters
 J1 = J(:);
 k = find(J1);
 histogram(J1(k))
 xlabel('pairwise parameter strength')
 ylabel('frequency')
 title('Distribution of Pairwise Parameter')
-%%
+%% Examine the convergence closely 
 figure(2)
 samples = Metropolis_Ising(h,J,N,1,20000,20000);
 s_mean = IsingMean(samples,N);

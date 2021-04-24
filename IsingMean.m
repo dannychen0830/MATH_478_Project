@@ -1,5 +1,10 @@
 % output the mean behavior of single & pairwise interactions 
 
+% Input: samples - a vector of samples in binary representation
+
+% Output: mean - a vector of mean and covariances of the sample spike train
+
+
 function mean = IsingMean(samples,N)
 ss = length(samples);
 % convert to a spike train

@@ -1,3 +1,7 @@
+% Plots the variance of energy with respect to network density (governed by
+% the connection probability in a ER random graph)
+
+% Just press RUN to see the plot of variance vs. p
 
 
 N = 20;
@@ -46,7 +50,6 @@ for t = 1:length(p)
     disp(['completed value ',num2str(p(t))])
 end
 
-%%
 errorbar(p,VE,error,'LineWidth',1.5)
 xlabel('connection probability')
 ylabel('variance of energy')

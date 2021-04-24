@@ -1,3 +1,10 @@
+% Computes a vector of data mean and covariance to fit the Maximum entropy
+% model to
+
+% input: data in the form of spike trains
+% output: a vector a means (first n entries for spike rate, last n(n-1)
+% entries for covariance)
+
 function mean = DataMean(data)
 
 ss = length(data(1,:));

@@ -14,6 +14,8 @@ mag = 0.45;
 A = zeros(N);
 W = zeros(N);
 
+% each pair of nodes has an equal probability of connecting (with E/I ratio
+% specified by eir)
 for i=1:N
     for j=i+1:N
         if rand < p
@@ -88,18 +90,20 @@ title('Degree distribution')
 [spk NetParams V] = SimLIFNet(W,'simTime',500,'tstep',1e-2,...
       'offsetCurrents',0.1*ones(length(W),1),...
            'noiseAmplitude',0.6*ones(length(W),1));
-%%
 T = time_to_train(spk,500,1);
+
 figure(2)
-subplot(1,4,1)
+subplot(1,4,1) % plot the resulting graph
 plot(G,'NodeLabel',{})
 title('Network Topolgy')
-subplot(1,4,2)
+
+subplot(1,4,2) % plot the algorithm performance 
 [h,J] = InverseIsing2(T,N,100,0.1,0.1,20000,20000);
 xlabel('number of iterations')
 ylabel('discrepency between model and data')
 title('Model Fitting')
-subplot(1,4,4)
+
+subplot(1,4,4) % plot the heat capacity
 num = 5;
 dis = zeros(1,num);
 for i=1:num
@@ -115,7 +119,8 @@ hold on
 xline(sum(dis)/num + 1)
 hold off
 title('Temperature vs. Heat Capacity')
-subplot(1,4,3)
+
+subplot(1,4,3) % plot the distribution of the pairwise parameter 
 J1 = J(:);
 k = find(J1);
 histogram(J1(k))

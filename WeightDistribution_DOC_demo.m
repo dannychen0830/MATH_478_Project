@@ -3,6 +3,8 @@
 
 % Just press RUN
 
+% generate weight matrix (uncomment the corresponding line for the desired
+% distribution)
 N = 40;
 W = zeros(N);
 for i=1:N
@@ -11,24 +13,29 @@ for i=1:N
     end
 end
 
+% generate spike train
 [spk NetParams V] = SimLIFNet(W,'simTime',500,'tstep',1e-2,...
       'offsetCurrents',0.1*ones(length(W),1),...
            'noiseAmplitude',0.6*ones(length(W),1));
 
 T = time_to_train(spk,500,1);
+
+% generate figures
 figure(2)
-subplot(1,4,1)
+subplot(1,4,1) % plot of weight distribution (histogram)
 Wc = W(:);
 histogram(Wc)
 xlabel('weight between neurons')
 ylabel('frequency')
 title('Weight Distribution of Neural Network')
-subplot(1,4,2)
+
+subplot(1,4,2) % plot of algorithm performance
 [h,J] = InverseIsing2(T,N,100,0.1,0.1,8000,8000);
 xlabel('number of iterations')
 ylabel('discrepency between model and data')
 title('Model Fitting')
-subplot(1,4,4)
+
+subplot(1,4,4) % plot of heat capacity
 num = 5;
 dis = zeros(1,num);
 for i=1:num
@@ -44,14 +51,15 @@ hold on
 xline(sum(dis)/num + 1)
 hold off
 title('Temperature vs. Heat Capacity')
-subplot(1,4,3)
+
+subplot(1,4,3) % plot of distribution of pairwise parameter
 J1 = J(:);
 k = find(J1);
 histogram(J1(k))
 xlabel('pairwise parameter strength')
 ylabel('frequency')
 title('Distribution of Pairwise Parameter')
-%%
+%% Take a closer look at the convergence
 figure(3)
 samples = Metropolis_Ising(h,J,N,1,10000,10000);
 s_mean = IsingMean(samples,N);
